@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, HTTPException, Query, Body, Depends
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import Column, Integer, String, Float, create_engine, UniqueConstraint
@@ -10,7 +11,7 @@ from typing import Optional, List
 logging.basicConfig(level=logging.INFO)
 
 # Database setup
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
