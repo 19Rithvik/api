@@ -86,9 +86,14 @@ def create_product(product: ProductCreate = Body(...), db: Session = Depends(get
         db.commit()
         db.refresh(db_product)
         return db_product
-    except IntegrityError:
+    except IntegrityError as e:
         db.rollback()
+        logging.error(f"IntegrityError: {e}")
         raise HTTPException(status_code=400, detail="Product creation failed due to duplicate name.")
+    except Exception as e:
+        db.rollback()
+        logging.error(f"Error creating product: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while creating the product.")
 
 # Retrieve a product by ID with error handling for non-existent and invalid IDs
 @app.get("/products/{product_id}", response_model=ProductResponse)
